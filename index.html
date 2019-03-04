@@ -7,6 +7,25 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        .color-box {
+           padding: 10px;
+           width: 50px;
+           height: 50px;
+            float: left;
+            margin-left: 15px;
+        }
+        .blue {
+            background: blue;
+        }
+
+        .green {
+            background: green;
+        }
+        .disableButton {
+            background: #222222;
+        }
+    </style>
 </head>
 
 <body>
@@ -16,8 +35,8 @@
             <div class="row">
                 <div class="col-md-4">
                     <div class="product">
-                        <div class="product-image">
-                            <img :src="image" alt="" />
+                        <div class="product-image" style="border: 1px solid">
+                            <img :src="image" alt="" style="width: 300px; height: auto; display: block; margin: 0 auto" />
                         </div>
 
                     </div>
@@ -25,14 +44,23 @@
 
                 <div class="col-md-6">
                     <div class="product-info">
-                        <h1>{{product}}</h1>
+                        <h1>{{title}}</h1>
                         <p v-if="inStock">In Stock</p>
                         <p v-else="inStock">Out of Stock</p>
 
                         <ul>
                             <li v-for="detail in details">{{detail}}</li>
                         </ul>
-                        <div v-for="variant in variants" :key="variant.variantId">{{variant.variantColor}}</div>
+                        <div v-for="variant in variants" :key="variant.variantId" class="color-box" :style="{background: variant.variantColor}"
+                            @mouseover="updateProduct(variant.variantimage)">
+                        </div>
+
+                        <button class="btn btn-button btn-primary" v-on:click="addToCart" 
+                        :disable="!inStock"
+                        :class="{disableButton: !inStock}">Add to Cart</button>
+                        <div class="cart">
+                            <p>Cart {{cart}}</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -47,21 +75,42 @@
         var app = new Vue({
             el: '#app',
             data: {
+                brand: 'Vue Mastery',
                 product: "Socks",
-                image: "./assets/watch-product-lockup-callout.png",
+                image: "./assets/index.jpg",
                 inStock: true,
                 details: ['80% cotton', '20% polyester', 'Gender-neutral'],
-                variants: [
-                    {
+                variants: [{
                         variantId: 2234,
                         variantColor: "green",
+                        variantimage: "./assets/05new.jpg"
                     },
                     {
                         variantId: 2235,
                         variantColor: "blue",
+                        variantimage: "./assets/xiaomi-mi-band-3.jpg"
                     }
-                ]
-            }
+                ],
+                cart: 0
+            },
+
+            methods: {
+                addToCart: function () {
+                    this.cart += 1
+                },
+
+                updateProduct: function (variantImage) {
+                    this.image = variantImage;
+                }
+            },
+           // These are properties on the Vue instance that calculate a value rather than store a value.
+            computed: {
+                title(){
+                    return this.brand + ' ' + this.product;
+                }
+            },
+
+
         })
     </script>
 </body>
